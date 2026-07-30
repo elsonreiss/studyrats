@@ -18,8 +18,20 @@ export default function Auth() {
   const [msg, setMsg] = useState(null)
   const [loading, setLoading] = useState(false)
   const pageRef = useRef(null)
+  const formRef = useRef(null)
+  const firstInputRef = useRef(null)
 
   useRevealObserver(pageRef, [mode])
+
+  /** Troca o modo e leva a pessoa até o formulário. */
+  function goToForm(next) {
+    setMode(next)
+    setMsg(null)
+    requestAnimationFrame(() => {
+      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      setTimeout(() => firstInputRef.current?.focus({ preventScroll: true }), 550)
+    })
+  }
 
   async function submit(e) {
     e.preventDefault()
@@ -70,10 +82,12 @@ export default function Auth() {
           consistência e o ranking mostra quem está mantendo o ritmo.
         </p>
         <div className="mt-9 flex items-center justify-center gap-3 flex-wrap" data-reveal>
-          <button onClick={() => { setMode('signup'); setMsg(null) }} className="btn btn-primary">
+          <button onClick={() => goToForm('signup')} className="btn btn-primary">
             Criar conta
           </button>
-          <a href="#entrar" className="btn btn-ghost">Já tenho conta</a>
+          <button onClick={() => goToForm('login')} className="btn btn-ghost">
+            Já tenho conta
+          </button>
         </div>
       </section>
 
@@ -94,7 +108,7 @@ export default function Auth() {
       </section>
 
       {/* Formulário */}
-      <section id="entrar" className="py-24 px-6">
+      <section id="entrar" ref={formRef} className="py-24 px-6 scroll-mt-20">
         <div className="max-w-[420px] mx-auto">
           <h2 className="h1 text-center" data-reveal>
             {mode === 'signup' ? 'Criar conta.' : 'Entrar.'}
@@ -106,6 +120,7 @@ export default function Auth() {
           <form onSubmit={submit} className="mt-10 space-y-3.5 rise" key={mode}>
             {mode === 'signup' && (
               <input
+                ref={firstInputRef}
                 className="field"
                 placeholder="Nome"
                 value={name}
@@ -114,6 +129,7 @@ export default function Auth() {
               />
             )}
             <input
+              ref={mode === 'signup' ? undefined : firstInputRef}
               type="email"
               className="field"
               placeholder="E-mail"
