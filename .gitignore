@@ -1,0 +1,34 @@
+# dependências
+node_modules
+
+# build
+dist
+dist-ssr
+
+# ambiente — nunca versionar
+.env
+.env.local
+.env.*.local
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# editores
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# sistema
+.DS_Store
+Thumbs.db
+
+# vercel
+.vercel

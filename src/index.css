@@ -1,0 +1,521 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Tokens — tema claro (padrão) e escuro, no estilo Apple.
+   O acento continua sendo o teal do logo.
+   ============================================================ */
+:root {
+  --s-surface: #ffffff;
+  --s-alt: #f5f5f7;
+  --s-card: #ffffff;
+  --s-card-2: #f5f5f7;
+  --s-edge: #e3e3e6;
+  --s-edge-strong: #c9c9ce;
+
+  --s-ink: #1d1d1f;
+  --s-muted: #6e6e73;
+  --s-faint: #86868b;
+
+  --s-brand: #2f7c77;
+  --s-brand-hover: #256561;
+  --s-brand-soft: #e6f2f1;
+  --s-on-brand: #ffffff;
+
+  --s-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  --s-nav: rgba(255, 255, 255, 0.72);
+  --s-scrim: rgba(0, 0, 0, 0.4);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --s-surface: #000000;
+    --s-alt: #0b0b0c;
+    --s-card: #131315;
+    --s-card-2: #1c1c1e;
+    --s-edge: #2a2a2c;
+    --s-edge-strong: #3a3a3d;
+
+    --s-ink: #f5f5f7;
+    --s-muted: #a1a1a6;
+    --s-faint: #86868b;
+
+    --s-brand: #63b3ad;
+    --s-brand-hover: #7cc4bf;
+    --s-brand-soft: #122c2a;
+    --s-on-brand: #04120f;
+
+    --s-shadow: 0 4px 28px rgba(0, 0, 0, 0.5);
+    --s-nav: rgba(0, 0, 0, 0.72);
+    --s-scrim: rgba(0, 0, 0, 0.6);
+  }
+}
+
+:root[data-theme="dark"] {
+  --s-surface: #000000;
+  --s-alt: #0b0b0c;
+  --s-card: #131315;
+  --s-card-2: #1c1c1e;
+  --s-edge: #2a2a2c;
+  --s-edge-strong: #3a3a3d;
+
+  --s-ink: #f5f5f7;
+  --s-muted: #a1a1a6;
+  --s-faint: #86868b;
+
+  --s-brand: #63b3ad;
+  --s-brand-hover: #7cc4bf;
+  --s-brand-soft: #122c2a;
+  --s-on-brand: #04120f;
+
+  --s-shadow: 0 4px 28px rgba(0, 0, 0, 0.5);
+  --s-nav: rgba(0, 0, 0, 0.72);
+  --s-scrim: rgba(0, 0, 0, 0.6);
+}
+
+@theme {
+  --color-surface: var(--s-surface);
+  --color-alt: var(--s-alt);
+  --color-card: var(--s-card);
+  --color-card-2: var(--s-card-2);
+  --color-edge: var(--s-edge);
+  --color-edge-strong: var(--s-edge-strong);
+
+  --color-ink: var(--s-ink);
+  --color-muted: var(--s-muted);
+  --color-faint: var(--s-faint);
+
+  --color-brand: var(--s-brand);
+  --color-brand-dark: var(--s-brand-hover);
+  --color-brand-soft: var(--s-brand-soft);
+  --color-on-brand: var(--s-on-brand);
+
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display",
+    "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+html {
+  background: var(--s-surface);
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  color: var(--s-ink);
+  background: var(--s-surface);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.011em;
+  min-height: 100vh;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+::selection {
+  background: var(--s-brand);
+  color: var(--s-on-brand);
+}
+
+img { -webkit-user-drag: none; }
+
+/* ============================================================
+   Tipografia — escala Apple
+   ============================================================ */
+.display {
+  font-size: clamp(2.75rem, 7vw, 5rem);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+}
+
+.h1 {
+  font-size: clamp(2rem, 4.2vw, 3rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.028em;
+}
+
+.h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.022em;
+}
+
+.lead {
+  font-size: 1.125rem;
+  line-height: 1.5;
+  color: var(--s-muted);
+  letter-spacing: -0.014em;
+}
+
+.label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: var(--s-faint);
+}
+
+.eyebrow {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--s-brand);
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.025em;
+}
+
+.link {
+  color: var(--s-brand);
+  font-weight: 500;
+}
+.link:hover { text-decoration: underline; }
+
+/* ============================================================
+   Superfícies
+   ============================================================ */
+.card {
+  position: relative;
+  background: var(--s-card);
+  border: 1px solid var(--s-edge);
+  border-radius: 1.25rem;
+  transition: border-color 0.2s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card-soft {
+  position: relative;
+  background: var(--s-alt);
+  border-radius: 1.25rem;
+  border: none;
+}
+
+.card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--s-shadow);
+  border-color: var(--s-edge-strong);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 9999px;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  background: var(--s-card-2);
+  color: var(--s-muted);
+}
+
+/* ============================================================
+   Formulários
+   ============================================================ */
+.field {
+  width: 100%;
+  background: var(--s-card-2);
+  border: 1px solid transparent;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  color: var(--s-ink);
+  outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s, background-color 0.18s;
+}
+.field::placeholder { color: var(--s-faint); }
+.field:focus {
+  border-color: var(--s-brand);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--s-brand) 18%, transparent);
+}
+
+/* select com seta própria */
+select.field {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 2.5rem;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 1.15rem) 55%, calc(100% - 0.8rem) 55%;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+select.field option {
+  background: var(--s-card);
+  color: var(--s-ink);
+}
+
+/* cartão selecionável */
+.pick {
+  position: relative;
+  border-radius: 1rem;
+  border: 1.5px solid var(--s-edge);
+  background: var(--s-card-2);
+  padding: 0.85rem;
+  text-align: left;
+  transition: border-color 0.2s, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+.pick:hover { transform: translateY(-2px); }
+.pick[data-active="true"] {
+  border-color: var(--s-brand);
+  background: var(--s-brand-soft);
+}
+
+/* ============================================================
+   Botões — pill, como na Apple
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding: 0.7rem 1.4rem;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.012em;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, opacity 0.2s;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--s-brand);
+  color: var(--s-on-brand);
+}
+.btn-primary:hover { background: var(--s-brand-hover); }
+.btn-primary:disabled { opacity: 0.4; cursor: default; }
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--s-edge-strong);
+  color: var(--s-ink);
+}
+.btn-ghost:hover { border-color: var(--s-brand); color: var(--s-brand); }
+.btn-ghost:disabled { opacity: 0.4; cursor: default; }
+
+.btn-danger { background: #d0342c; color: #fff; }
+.btn-danger:hover { background: #b52d26; }
+.btn-danger:disabled { opacity: 0.4; cursor: default; }
+
+.btn-sm { padding: 0.45rem 1rem; font-size: 0.875rem; }
+
+/* ============================================================
+   Segmented control
+   ============================================================ */
+.segmented {
+  display: inline-flex;
+  padding: 0.25rem;
+  gap: 0.125rem;
+  border-radius: 9999px;
+  background: var(--s-card-2);
+}
+.segmented button {
+  padding: 0.4rem 1.1rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--s-muted);
+  transition: background-color 0.2s, color 0.2s;
+}
+.segmented button:hover { color: var(--s-ink); }
+.segmented button[data-active="true"] {
+  background: var(--s-card);
+  color: var(--s-ink);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* ============================================================
+   Seções alternadas
+   ============================================================ */
+.section-alt {
+  background: var(--s-alt);
+}
+
+/* ============================================================
+   Movimento
+   ============================================================ */
+@keyframes fade { from { opacity: 0 } to { opacity: 1 } }
+
+/* Importante: os keyframes terminam em `transform: none`.
+   Com animation-fill-mode: both, um transform residual transformaria o
+   elemento em containing block e quebraria qualquer position: fixed dentro dele. */
+@keyframes pop {
+  from { opacity: 0; transform: translateY(14px) scale(0.97) }
+  to { opacity: 1; transform: none }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px) }
+  to { opacity: 1; transform: none }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) }
+  50% { transform: translateY(-10px) }
+}
+
+@keyframes shimmer {
+  from { background-position: -180% 0 }
+  to { background-position: 180% 0 }
+}
+
+@keyframes ring {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--s-brand) 45%, transparent) }
+  70% { box-shadow: 0 0 0 14px transparent }
+  100% { box-shadow: 0 0 0 0 transparent }
+}
+
+@keyframes grow {
+  from { transform: scaleX(0) }
+  to { transform: scaleX(1) }
+}
+
+.rise { animation: rise 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+@keyframes sheet {
+  from { transform: translateY(100%) }
+  to { transform: none }
+}
+
+/* rolagem sem barra visível (roletas do seletor de duração) */
+.no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* linha clicável de formulário */
+.row-field {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--s-card-2);
+  border: 1px solid transparent;
+  border-radius: 0.75rem;
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  color: var(--s-ink);
+  transition: border-color 0.18s, background-color 0.18s;
+  cursor: pointer;
+}
+.row-field:hover { border-color: var(--s-edge-strong); }
+
+/* placeholder de carregamento */
+@keyframes shimmer-bg {
+  from { background-position: 200% 0 }
+  to { background-position: -200% 0 }
+}
+.skeleton {
+  background-image: linear-gradient(
+    90deg,
+    var(--s-card-2) 25%,
+    color-mix(in srgb, var(--s-card-2) 55%, var(--s-edge)) 37%,
+    var(--s-card-2) 63%
+  );
+  background-size: 400% 100%;
+  animation: shimmer-bg 1.5s ease-in-out infinite;
+  border-radius: 0.5rem;
+}
+
+/* chama da sequência */
+.flame { display: inline-flex; align-items: center; gap: 0.35rem; color: #e8853a; }
+.flame svg { animation: flicker 2.6s ease-in-out infinite; }
+@keyframes flicker {
+  0%, 100% { transform: scale(1) rotate(0deg) }
+  35% { transform: scale(1.12) rotate(-3deg) }
+  70% { transform: scale(0.96) rotate(2deg) }
+}
+.float { animation: float 6s ease-in-out infinite; }
+.pulse-ring { animation: ring 2.4s cubic-bezier(0.16, 1, 0.3, 1) infinite; }
+
+/* transição entre páginas */
+.page {
+  animation: rise 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* revelação no scroll */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--d, 0ms);
+  will-change: opacity, transform;
+}
+[data-reveal].in {
+  opacity: 1;
+  transform: none;
+}
+
+/* variações */
+[data-reveal="scale"] { transform: translateY(24px) scale(0.96); }
+[data-reveal="left"] { transform: translateX(-28px); }
+[data-reveal="right"] { transform: translateX(28px); }
+
+/* entrada escalonada dos filhos diretos */
+.stagger > * { --d: 0ms; }
+.stagger > *:nth-child(1) { --d: 0ms }
+.stagger > *:nth-child(2) { --d: 70ms }
+.stagger > *:nth-child(3) { --d: 140ms }
+.stagger > *:nth-child(4) { --d: 210ms }
+.stagger > *:nth-child(5) { --d: 280ms }
+.stagger > *:nth-child(6) { --d: 350ms }
+.stagger > *:nth-child(7) { --d: 420ms }
+.stagger > *:nth-child(8) { --d: 490ms }
+.stagger > *:nth-child(9) { --d: 560ms }
+.stagger > *:nth-child(n + 10) { --d: 630ms }
+
+/* barra que cresce da esquerda */
+.bar-fill {
+  transform-origin: left;
+  animation: grow 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* brilho sutil percorrendo um elemento */
+.shimmer {
+  background-image: linear-gradient(
+    100deg,
+    transparent 30%,
+    color-mix(in srgb, var(--s-brand) 22%, transparent) 50%,
+    transparent 70%
+  );
+  background-size: 220% 100%;
+  animation: shimmer 2.6s linear infinite;
+}
+
+/* microinterações */
+.btn { will-change: transform; }
+.btn:active { transform: scale(0.96); }
+
+.lift { transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease; }
+.lift:hover { transform: translateY(-4px); box-shadow: var(--s-shadow); }
+
+.nav-link { position: relative; }
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -4px;
+  height: 1.5px;
+  border-radius: 2px;
+  background: var(--s-brand);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.nav-link:hover::after,
+.nav-link[data-active="true"]::after { transform: scaleX(1); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+  [data-reveal] { opacity: 1 !important; transform: none !important; }
+}
