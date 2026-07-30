@@ -103,7 +103,7 @@ export default function Layout({ children }) {
       )}
 
       <footer className="section-alt mt-auto">
-        <div className="max-w-[1000px] mx-auto px-6 py-8 flex justify-center">
+        <div className="max-w-[1000px] mx-auto px-6 pt-8 pb-safe flex justify-center">
           <Credit />
         </div>
       </footer>

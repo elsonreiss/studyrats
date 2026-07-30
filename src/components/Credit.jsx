@@ -2,7 +2,7 @@ const USER = 'elsonreiss'
 
 export default function Credit({ className = '' }) {
   return (
-    <p className={`label flex items-center gap-1.5 flex-wrap ${className}`}>
+    <p className={`label flex items-center justify-center gap-1.5 flex-wrap text-center ${className}`}>
       <span>© {new Date().getFullYear()} StudyRats · feito por</span>
       <a
         href={`https://github.com/${USER}`}

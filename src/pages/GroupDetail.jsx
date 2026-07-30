@@ -6,6 +6,7 @@ import Leaderboard from '../components/Leaderboard'
 import CheckinRow from '../components/CheckinRow'
 import CheckinModal from '../components/CheckinModal'
 import ConfirmDialog from '../components/ConfirmDialog'
+import EditGroup from '../components/EditGroup'
 import GroupChat from '../components/GroupChat'
 import GroupMembers from '../components/GroupMembers'
 import Avatar from '../components/Avatar'
@@ -46,9 +47,9 @@ export default function GroupDetail() {
   const [copied, setCopied] = useState(null)
   const [ask, setAsk] = useState(null)
   const [busy, setBusy] = useState(false)
-  const [uploadingCover, setUploadingCover] = useState(false)
   const [unread, setUnread] = useState(0)
   const [showStats, setShowStats] = useState(false)
+  const [editing, setEditing] = useState(false)
   const coverRef = useRef()
 
   const isOwner = group?.owner_id === user.id
@@ -109,20 +110,6 @@ export default function GroupDetail() {
     const { error } = await supabase.rpc('join_group', { p_group_id: id })
     setJoining(false)
     if (!error) load()
-  }
-
-  async function changeCover(e) {
-    const f = e.target.files?.[0]
-    e.target.value = ''
-    if (!f || !f.type.startsWith('image/')) return
-    setUploadingCover(true)
-    try {
-      const url = await uploadImage('groups', user.id, f, { path: `${user.id}/${id}.jpg` })
-      await supabase.from('groups').update({ photo_url: url }).eq('id', id)
-      load()
-    } finally {
-      setUploadingCover(false)
-    }
   }
 
   async function runAction() {
@@ -211,22 +198,20 @@ export default function GroupDetail() {
             <img src={group.photo_url} alt={group.name} className="w-full aspect-[16/9] object-cover" />
             {isOwner && (
               <button
-                onClick={() => coverRef.current.click()}
-                disabled={uploadingCover}
-                className="absolute top-3 right-3 btn btn-sm bg-black/60 text-white backdrop-blur-md opacity-0 group-hover/cover:opacity-100 transition"
+                onClick={() => setEditing(true)}
+                className="absolute top-3 right-3 btn btn-sm bg-black/60 text-white backdrop-blur-md"
               >
-                {uploadingCover ? 'Enviando' : 'Trocar capa'}
+                Editar
               </button>
             )}
           </div>
         ) : (
           isOwner && (
             <button
-              onClick={() => coverRef.current.click()}
-              disabled={uploadingCover}
+              onClick={() => setEditing(true)}
               className="w-full py-10 text-center hover:opacity-90 transition border-b border-edge"
             >
-              <p className="font-medium">{uploadingCover ? 'Enviando capa' : 'Adicionar capa ao desafio'}</p>
+              <p className="font-medium">Adicionar capa ao desafio</p>
               <p className="label mt-1">Aparece aqui no topo e no convite</p>
             </button>
           )
@@ -249,7 +234,6 @@ export default function GroupDetail() {
           />
         </div>
       </div>
-      <input ref={coverRef} type="file" accept="image/*" className="hidden" onChange={changeCover} />
 
       {/* Abas */}
       <div className="segmented w-full mt-8 grid grid-cols-4" data-reveal>
@@ -356,9 +340,14 @@ export default function GroupDetail() {
                 {copied === 'code' ? 'Copiado' : group.invite_code}
               </button>
               {isOwner ? (
-                <button onClick={() => setAsk('delete')} className="text-sm text-faint hover:text-red-500 transition px-2 ml-auto">
-                  Apagar desafio
-                </button>
+                <>
+                  <button onClick={() => setEditing(true)} className="btn btn-ghost btn-sm">
+                    Editar desafio
+                  </button>
+                  <button onClick={() => setAsk('delete')} className="text-sm text-faint hover:text-red-500 transition px-2 ml-auto">
+                    Apagar
+                  </button>
+                </>
               ) : (
                 <button onClick={() => setAsk('leave')} className="text-sm text-faint hover:text-red-500 transition px-2 ml-auto">
                   Sair do desafio
@@ -398,6 +387,12 @@ export default function GroupDetail() {
           setFeed((prev) => prev.map((it) => (it.id === sid ? { ...it, comment_count: n } : it)))
           setOpen((o) => (o && o.id === sid ? { ...o, comment_count: n } : o))
         }}
+      />
+
+      <EditGroup
+        group={editing ? group : null}
+        onClose={() => setEditing(false)}
+        onSaved={(patch) => setGroup((g) => ({ ...g, ...patch }))}
       />
 
       <ConfirmDialog

@@ -338,6 +338,14 @@ select.field option {
   to { transform: none }
 }
 
+/* espaço embaixo para a barra de navegação fixa do mobile não cobrir o conteúdo */
+.pb-safe {
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 5.5rem);
+}
+@media (min-width: 640px) {
+  .pb-safe { padding-bottom: 2rem; }
+}
+
 /* rolagem sem barra visível (roletas do seletor de duração) */
 .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
