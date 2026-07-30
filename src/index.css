@@ -1,56 +1,12 @@
 @import "tailwindcss";
 
 /* ============================================================
-   Tokens — tema claro (padrão) e escuro, no estilo Apple.
-   O acento continua sendo o teal do logo.
+   Tokens — tema escuro único.
+   O acento é o teal extraído do logo.
    ============================================================ */
 :root {
-  --s-surface: #ffffff;
-  --s-alt: #f5f5f7;
-  --s-card: #ffffff;
-  --s-card-2: #f5f5f7;
-  --s-edge: #e3e3e6;
-  --s-edge-strong: #c9c9ce;
+  color-scheme: dark;
 
-  --s-ink: #1d1d1f;
-  --s-muted: #6e6e73;
-  --s-faint: #86868b;
-
-  --s-brand: #2f7c77;
-  --s-brand-hover: #256561;
-  --s-brand-soft: #e6f2f1;
-  --s-on-brand: #ffffff;
-
-  --s-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
-  --s-nav: rgba(255, 255, 255, 0.72);
-  --s-scrim: rgba(0, 0, 0, 0.4);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --s-surface: #000000;
-    --s-alt: #0b0b0c;
-    --s-card: #131315;
-    --s-card-2: #1c1c1e;
-    --s-edge: #2a2a2c;
-    --s-edge-strong: #3a3a3d;
-
-    --s-ink: #f5f5f7;
-    --s-muted: #a1a1a6;
-    --s-faint: #86868b;
-
-    --s-brand: #63b3ad;
-    --s-brand-hover: #7cc4bf;
-    --s-brand-soft: #122c2a;
-    --s-on-brand: #04120f;
-
-    --s-shadow: 0 4px 28px rgba(0, 0, 0, 0.5);
-    --s-nav: rgba(0, 0, 0, 0.72);
-    --s-scrim: rgba(0, 0, 0, 0.6);
-  }
-}
-
-:root[data-theme="dark"] {
   --s-surface: #000000;
   --s-alt: #0b0b0c;
   --s-card: #131315;

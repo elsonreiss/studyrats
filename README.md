@@ -52,7 +52,7 @@ O calendário mostra sua consistência, a sequência mostra seu compromisso, e a
 
 ### Interface
 
-- **Tema claro e escuro** seguindo o sistema, com alternância manual
+- Tema escuro, tipografia grande e muito espaço em branco
 - Animações de entrada, contadores animados e transições entre páginas
 - **Instalável como app** (PWA), com lembrete diário de check-in
 
@@ -113,17 +113,16 @@ do SPA.
 
 ```
 supabase/              # schema e migrações numeradas
-public/                # logos, ícones do PWA, manifest e service worker
+public/                # logo, ícones do PWA, manifest e service worker
 src/
   App.jsx              # rotas sob demanda, contexto de auth e lembrete
   lib/
     supabase.js        # cliente, formatação, fuso e upload
     photos.js          # URLs assinadas com cache persistente
     cleanup.js         # limpeza de fotos antigas e uso de espaço
-    theme.js           # tema claro / escuro / automático
     motion.js          # revelação no scroll e contadores animados
     reminder.js        # lembrete diário de check-in
-  components/          # 25 componentes reutilizáveis
+  components/          # componentes reutilizáveis
   pages/               # Auth, Feed, NewCheckin, Race, Ranking,
                        # Groups, GroupDetail, Profile
 ```

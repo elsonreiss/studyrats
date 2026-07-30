@@ -3,7 +3,6 @@ import { NavLink, Link, useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useRevealObserver } from '../lib/motion'
 import Logo from './Logo'
-import ThemeToggle from './ThemeToggle'
 import Credit from './Credit'
 
 const links = [
@@ -53,7 +52,6 @@ export default function Layout({ children }) {
             <Link to="/checkin" className="hidden sm:inline-flex btn btn-primary btn-sm">
               Check-in
             </Link>
-            <ThemeToggle className="text-[13px]" />
             <button
               onClick={() => supabase.auth.signOut()}
               className="text-[13px] text-muted hover:text-ink transition-colors duration-300"
@@ -105,11 +103,8 @@ export default function Layout({ children }) {
       )}
 
       <footer className="section-alt mt-auto">
-        <div className="max-w-[1000px] mx-auto px-6 py-8 flex items-center justify-between gap-4 flex-wrap">
+        <div className="max-w-[1000px] mx-auto px-6 py-8 flex justify-center">
           <Credit />
-          <p className="label flex items-center">
-            Aparência: <ThemeToggle className="!px-1 !text-[13px] text-ink" />
-          </p>
         </div>
       </footer>
     </div>

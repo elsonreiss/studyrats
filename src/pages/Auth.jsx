@@ -2,7 +2,6 @@ import { useState, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import { useRevealObserver } from '../lib/motion'
 import Logo from '../components/Logo'
-import ThemeToggle from '../components/ThemeToggle'
 import Credit from '../components/Credit'
 
 const steps = [
@@ -52,10 +51,7 @@ export default function Auth() {
       >
         <div className="max-w-[1000px] mx-auto px-6 h-14 flex items-center justify-between">
           <Logo className="h-9 w-auto" />
-          <div className="flex items-center gap-4">
-            <span className="label hidden sm:inline">comunidade Acelera Dev</span>
-            <ThemeToggle className="text-[13px]" />
-          </div>
+          <span className="label hidden sm:inline">comunidade Acelera Dev</span>
         </div>
       </header>
 
