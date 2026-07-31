@@ -107,8 +107,12 @@ export default function Layout({ children }) {
       )}
 
       <footer className="section-alt mt-auto">
-        <div className="max-w-[1000px] mx-auto px-6 pt-8 pb-safe flex justify-center">
+        <div className="max-w-[1000px] mx-auto px-6 pt-8 pb-safe flex flex-col items-center gap-3">
           <Credit />
+          <p className="flex gap-5">
+            <Link to="/privacidade" className="label hover:text-ink transition">Privacidade</Link>
+            <Link to="/termos" className="label hover:text-ink transition">Termos de uso</Link>
+          </p>
         </div>
       </footer>
     </div>

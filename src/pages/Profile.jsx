@@ -14,6 +14,7 @@ import Toast from '../components/Toast'
 import Streak from '../components/Streak'
 import ReminderToggle from '../components/ReminderToggle'
 import StorageUsage from '../components/StorageUsage'
+import AccountData from '../components/AccountData'
 import RatLoader from '../components/RatLoader'
 
 export default function Profile() {
@@ -293,6 +294,7 @@ export default function Profile() {
           <h2 className="h2">Ajustes</h2>
           <ReminderToggle />
           <StorageUsage onCleaned={load} />
+          <AccountData />
         </section>
       )}
 

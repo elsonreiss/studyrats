@@ -1,5 +1,5 @@
 import { useEffect, useState, createContext, useContext, lazy, Suspense } from 'react'
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom'
 import { supabase, todayISO } from './lib/supabase'
 import { useDailyReminder } from './lib/reminder'
 import Layout from './components/Layout'
@@ -10,6 +10,7 @@ import Auth from './pages/Auth'
 import Feed from './pages/Feed'
 
 // rotas carregadas sob demanda — reduz o bundle inicial
+const Legal = lazy(() => import('./pages/Legal'))
 const NewCheckin = lazy(() => import('./pages/NewCheckin'))
 const Race = lazy(() => import('./pages/Race'))
 const Ranking = lazy(() => import('./pages/Ranking'))
@@ -22,6 +23,19 @@ export const useAuth = () => useContext(AuthContext)
 
 function Fallback() {
   return <RatLoader size={52} />
+}
+
+const LEGAL_DOCS = ['privacidade', 'termos']
+
+/** Sem sessão, só privacidade e termos abrem; o resto cai no login. */
+function LegalOrAuth() {
+  const { doc } = useParams()
+  if (!LEGAL_DOCS.includes(doc)) return <Auth />
+  return (
+    <div className="min-h-screen px-6 py-12">
+      <Legal />
+    </div>
+  )
 }
 
 function Shell() {
@@ -53,6 +67,8 @@ function Shell() {
           <Route path="/grupos/:id" element={<GroupDetail />} />
           <Route path="/perfil" element={<Profile />} />
           <Route path="/perfil/:id" element={<Profile />} />
+          <Route path="/privacidade" element={<Legal />} />
+          <Route path="/termos" element={<Legal />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
@@ -78,7 +94,18 @@ export default function App() {
     )
   }
 
-  if (!session) return <Auth />
+  // privacidade e termos precisam abrir sem conta: quem vai se cadastrar
+  // tem que conseguir ler antes de aceitar
+  if (!session) {
+    return (
+      <Suspense fallback={<RatLoader size={52} />}>
+        <Routes>
+          <Route path="/:doc" element={<LegalOrAuth />} />
+          <Route path="*" element={<Auth />} />
+        </Routes>
+      </Suspense>
+    )
+  }
 
   return (
     <AuthContext.Provider value={{ session, user: session.user }}>

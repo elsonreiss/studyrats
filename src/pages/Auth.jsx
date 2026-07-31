@@ -1,5 +1,7 @@
 import { useState, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { TERMS_VERSION } from './Legal'
 import { useRevealObserver } from '../lib/motion'
 import Logo from '../components/Logo'
 import Credit from '../components/Credit'
@@ -17,6 +19,7 @@ export default function Auth() {
   const [password, setPassword] = useState('')
   const [msg, setMsg] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [accepted, setAccepted] = useState(false)
   const pageRef = useRef(null)
   const formRef = useRef(null)
   const firstInputRef = useRef(null)
@@ -39,10 +42,20 @@ export default function Auth() {
     setMsg(null)
     try {
       if (mode === 'signup') {
-        const { error } = await supabase.auth.signUp({
+        if (!accepted) throw new Error('É preciso aceitar os termos para criar a conta.')
+
+        const { data, error } = await supabase.auth.signUp({
           email, password, options: { data: { name } },
         })
         if (error) throw error
+
+        // registra o aceite, com a versão do documento
+        if (data?.user) {
+          await supabase
+            .from('profiles')
+            .update({ accepted_terms_at: new Date().toISOString(), terms_version: TERMS_VERSION })
+            .eq('id', data.user.id)
+        }
         setMsg({ ok: true, text: 'Conta criada. Se a confirmação por e-mail estiver ativa, verifique sua caixa de entrada.' })
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password })
@@ -146,13 +159,34 @@ export default function Auth() {
               required
             />
 
+            {mode === 'signup' && (
+              <label className="flex items-start gap-3 text-sm text-muted leading-relaxed cursor-pointer pt-1">
+                <input
+                  type="checkbox"
+                  checked={accepted}
+                  onChange={(e) => setAccepted(e.target.checked)}
+                  className="mt-1 w-4 h-4 shrink-0 accent-[var(--s-brand)]"
+                />
+                <span>
+                  Li e aceito a{' '}
+                  <Link to="/privacidade" className="link">política de privacidade</Link> e os{' '}
+                  <Link to="/termos" className="link">termos de uso</Link>. Estou ciente de que meus
+                  dados ficam em servidores nos Estados Unidos e que minhas fotos de check-in
+                  serão vistas pelas outras pessoas.
+                </span>
+              </label>
+            )}
+
             {msg && (
               <p className={`text-sm leading-snug px-1 ${msg.ok ? 'text-brand' : 'text-red-500'}`}>
                 {msg.text}
               </p>
             )}
 
-            <button disabled={loading} className="btn btn-primary w-full">
+            <button
+              disabled={loading || (mode === 'signup' && !accepted)}
+              className="btn btn-primary w-full"
+            >
               {loading ? 'Aguarde' : mode === 'signup' ? 'Criar conta' : 'Entrar'}
             </button>
           </form>
@@ -171,8 +205,12 @@ export default function Auth() {
       </section>
 
       <footer className="section-alt">
-        <div className="max-w-[1000px] mx-auto px-6 py-8 flex justify-center">
+        <div className="max-w-[1000px] mx-auto px-6 py-8 flex flex-col items-center gap-3">
           <Credit />
+          <p className="flex gap-5">
+            <Link to="/privacidade" className="label hover:text-ink transition">Privacidade</Link>
+            <Link to="/termos" className="label hover:text-ink transition">Termos de uso</Link>
+          </p>
         </div>
       </footer>
     </div>
