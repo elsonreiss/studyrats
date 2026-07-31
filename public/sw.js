@@ -1,9 +1,12 @@
 /* StudyRats — service worker
    Cacheia apenas a casca do app. Dados e fotos sempre vêm da rede,
-   para o feed nunca aparecer desatualizado. */
+   para o feed nunca aparecer desatualizado.
 
-const VERSION = 'studyrats-v1'
-const SHELL = ['/', '/index.html', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png']
+   IMPORTANTE: suba o VERSION sempre que trocar a logo, os ícones ou
+   qualquer arquivo de /public. É isso que faz o cache antigo ser descartado. */
+
+const VERSION = 'studyrats-v3'
+const SHELL = ['/', '/index.html', '/manifest.webmanifest']
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(VERSION).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()))
@@ -31,7 +34,25 @@ self.addEventListener('fetch', (e) => {
     return
   }
 
-  // assets: cache primeiro
+  // imagens da marca: mostra o cache na hora, mas atualiza por trás.
+  // assim uma logo nova aparece na visita seguinte, sem precisar limpar nada.
+  if (/\.(png|jpg|jpeg|svg|webp|ico)$/i.test(url.pathname)) {
+    e.respondWith(
+      caches.open(VERSION).then(async (cache) => {
+        const hit = await cache.match(request)
+        const network = fetch(request)
+          .then((res) => {
+            if (res.ok) cache.put(request, res.clone())
+            return res
+          })
+          .catch(() => hit)
+        return hit || network
+      })
+    )
+    return
+  }
+
+  // demais assets (js/css com hash no nome): cache primeiro
   e.respondWith(
     caches.match(request).then((hit) =>
       hit ||
