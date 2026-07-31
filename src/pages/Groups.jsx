@@ -32,7 +32,23 @@ export default function Groups() {
       .from('group_members')
       .select('group_id, groups ( id, name, description, photo_url, invite_code, owner_id, starts_on, ends_on )')
       .eq('user_id', user.id)
-    setMyGroups((data || []).map((r) => r.groups).filter(Boolean))
+
+    const groups = (data || []).map((r) => r.groups).filter(Boolean)
+
+    // conta os membros de todos os desafios numa consulta só,
+    // em vez de uma por card
+    if (groups.length > 0) {
+      const { data: members } = await supabase
+        .from('group_members')
+        .select('group_id')
+        .in('group_id', groups.map((g) => g.id))
+
+      const counts = {}
+      for (const m of members || []) counts[m.group_id] = (counts[m.group_id] || 0) + 1
+      groups.forEach((g) => { g.member_count = counts[g.id] || 1 })
+    }
+
+    setMyGroups(groups)
   }, [user.id])
 
   useEffect(() => { load() }, [load])
@@ -202,9 +218,20 @@ export default function Groups() {
                       </>
                     )}
 
-                    <p className="label mt-6">
-                      código <span className="text-brand font-semibold num ml-1">{g.invite_code}</span>
-                    </p>
+                    <div className="flex items-center gap-4 mt-6 flex-wrap">
+                      <p className="label flex items-center gap-1.5">
+                        <svg viewBox="0 0 20 20" className="w-4 h-4 fill-none stroke-current stroke-[1.5]" aria-hidden="true">
+                          <circle cx="7.5" cy="7" r="3" />
+                          <path d="M2 16.5c0-2.8 2.5-4.5 5.5-4.5s5.5 1.7 5.5 4.5" />
+                          <path d="M13.5 5.2a2.8 2.8 0 0 1 0 5.4M15 12.4c2 .5 3 1.9 3 4.1" />
+                        </svg>
+                        <span className="num">{g.member_count}</span>
+                        {g.member_count === 1 ? 'membro' : 'membros'}
+                      </p>
+                      <p className="label">
+                        código <span className="text-brand font-semibold num ml-1">{g.invite_code}</span>
+                      </p>
+                    </div>
                   </div>
                 </Link>
               </div>

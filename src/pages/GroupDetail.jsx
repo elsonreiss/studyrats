@@ -104,6 +104,7 @@ export default function GroupDetail() {
 
   const leader = board[0]
   const me = board.find((r) => r.user_id === user.id)
+  const myRank = me ? board.findIndex((r) => r.user_id === user.id) + 1 : null
 
   async function join() {
     setJoining(true)
@@ -211,17 +212,37 @@ export default function GroupDetail() {
         <div className="grid grid-cols-3 divide-x divide-edge">
           <Summary
             avatar={<Avatar url={leader?.avatar_url} name={leader?.name || '?'} size={26} />}
-            value={Number(leader?.active_days || 0)}
+            value={
+              <svg
+                viewBox="0 0 24 24"
+                className="w-6 h-6 fill-none stroke-[1.6]"
+                style={{ stroke: '#c8a021' }}
+                aria-hidden="true"
+              >
+                <path d="M8 4h8v5a4 4 0 0 1-8 0V4Z" />
+                <path d="M8 5.5H5.5a3 3 0 0 0 3 3M16 5.5H18.5a3 3 0 0 1-3 3" />
+                <path d="M12 13v3.5M9 20h6M10 16.5h4l.7 3.5h-5.4l.7-3.5Z" />
+              </svg>
+            }
             label="Líder"
+            hint={leader ? `${leader.active_days} ${Number(leader.active_days) === 1 ? 'dia' : 'dias'}` : null}
           />
           <Summary
             avatar={<Avatar url={me?.avatar_url} name={me?.name || '?'} size={26} />}
-            value={Number(me?.active_days || 0)}
+            value={myRank ? `${myRank}º` : '—'}
             label="Você"
+            hint={me ? `${me.active_days} ${Number(me.active_days) === 1 ? 'dia' : 'dias'}` : null}
           />
           <Summary
-            value={pg ? pg.left : '∞'}
-            label={pg ? 'dias restantes' : 'sem prazo'}
+            value={stats ? Number(stats.member_count) : '—'}
+            label="Membros"
+            icon={
+              <svg viewBox="0 0 20 20" className="w-4 h-4 fill-none stroke-current stroke-[1.5] text-muted">
+                <circle cx="7.5" cy="7" r="3" />
+                <path d="M2 16.5c0-2.8 2.5-4.5 5.5-4.5s5.5 1.7 5.5 4.5" />
+                <path d="M13.5 5.2a2.8 2.8 0 0 1 0 5.4M15 12.4c2 .5 3 1.9 3 4.1" />
+              </svg>
+            }
           />
         </div>
       </div>
@@ -258,6 +279,12 @@ export default function GroupDetail() {
 
           {pg && (
             <div>
+              <div className="flex items-baseline justify-between mb-2.5">
+                <p className="label">Progresso do desafio</p>
+                <p className={`label num font-semibold ${pg.ended ? '' : '!text-brand'}`}>
+                  {pg.ended ? 'encerrado' : `${pg.left} dias restantes`}
+                </p>
+              </div>
               <div className="h-1.5 rounded-full bg-card-2 overflow-hidden">
                 <div className="h-full bg-brand rounded-full bar-fill" style={{ width: `${pg.pct}%` }} />
               </div>
@@ -400,7 +427,7 @@ export default function GroupDetail() {
   )
 }
 
-function Summary({ avatar, value, label }) {
+function Summary({ avatar, value, label, icon, hint }) {
   return (
     <div className="px-3 py-4 flex items-center justify-center gap-2.5">
       {avatar || (
@@ -408,15 +435,20 @@ function Summary({ avatar, value, label }) {
           className="w-[26px] h-[26px] rounded-md grid place-items-center shrink-0"
           style={{ background: 'var(--s-card)' }}
         >
-          <svg viewBox="0 0 16 16" className="w-3.5 h-3.5 fill-none stroke-current stroke-[1.4] text-muted">
-            <rect x="1.5" y="2.5" width="13" height="12" rx="2" />
-            <path d="M1.5 6h13M5 1.5v2M11 1.5v2" />
-          </svg>
+          {icon || (
+            <svg viewBox="0 0 16 16" className="w-3.5 h-3.5 fill-none stroke-current stroke-[1.4] text-muted">
+              <rect x="1.5" y="2.5" width="13" height="12" rx="2" />
+              <path d="M1.5 6h13M5 1.5v2M11 1.5v2" />
+            </svg>
+          )}
         </div>
       )}
       <div className="min-w-0">
-        <p className="num font-semibold leading-none">{value}</p>
-        <p className="label mt-1 truncate">{label}</p>
+        <div className="num font-semibold leading-none flex items-center">{value}</div>
+        <p className="label mt-1 truncate">
+          {label}
+          {hint && <span className="num"> · {hint}</span>}
+        </p>
       </div>
     </div>
   )
