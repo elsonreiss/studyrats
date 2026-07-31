@@ -1,7 +1,7 @@
 {
   "name": "StudyRats",
   "short_name": "StudyRats",
-  "description": "Registre seus estudos com foto, mantenha a sequência e acompanhe a corrida dos 100 dias da comunidade Acelera Dev.",
+  "description": "Registre seus estudos com foto, mantenha a sequência e acompanhe a corrida dos 100 dias.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
