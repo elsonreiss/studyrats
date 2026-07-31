@@ -61,7 +61,10 @@ export default function CheckinComments({ sessionId, onCountChange }) {
       .insert({ session_id: sessionId, user_id: user.id, body })
     if (err) {
       setText(body)
-      setError('Não foi possível comentar. Você precisa dividir um desafio com essa pessoa.')
+      setError(err.message.includes('Muitos comentários')
+        ? 'Devagar — muitos comentários seguidos. Espere um instante.'
+        : 'Não foi possível comentar. Tente de novo.')
+      setTimeout(() => setError(null), 4000)
     } else {
       load()
       setTimeout(() => endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 60)
@@ -70,7 +73,12 @@ export default function CheckinComments({ sessionId, onCountChange }) {
   }
 
   async function remove(id) {
-    await supabase.from('checkin_comments').delete().eq('id', id)
+    const { error: err } = await supabase.from('checkin_comments').delete().eq('id', id)
+    if (err) {
+      setError('Não foi possível apagar o comentário.')
+      setTimeout(() => setError(null), 3000)
+      return
+    }
     load()
   }
 

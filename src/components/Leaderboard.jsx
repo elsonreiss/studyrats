@@ -25,11 +25,21 @@ export default function Leaderboard({ groupId = null, limit = null, showPeriods 
   const [period, setPeriod] = useState(groupId ? 'all' : 'week')
   const [rows, setRows] = useState(null)
 
+  const [error, setError] = useState(false)
+
   useEffect(() => {
+    let alive = true
     setRows(null)
+    setError(false)
     supabase
       .rpc('get_leaderboard', { p_since: sinceFor(period), p_group_id: groupId })
-      .then(({ data }) => setRows(data || []))
+      .then(({ data, error: err }) => {
+        // a troca rápida de período pode fazer uma resposta antiga
+        // chegar depois da nova; o guard impede que ela sobrescreva
+        if (!alive) return
+        if (err) { setError(true); setRows([]) } else setRows(data || [])
+      })
+    return () => { alive = false }
   }, [period, groupId])
 
   const list = limit ? rows?.slice(0, limit) : rows
@@ -47,7 +57,14 @@ export default function Leaderboard({ groupId = null, limit = null, showPeriods 
 
       {rows === null && <RatLoader />}
 
-      {rows?.length === 0 && (
+      {error && (
+        <div className="card-soft py-16 text-center">
+          <p className="h2">Não foi possível carregar o ranking.</p>
+          <p className="lead mt-2">Verifique sua conexão e tente de novo.</p>
+        </div>
+      )}
+
+      {!error && rows?.length === 0 && (
         <div className="card-soft py-20 text-center" data-reveal>
           <p className="h2">Ninguém pontuou ainda.</p>
           <p className="lead mt-2">Registre um check-in para abrir o ranking.</p>

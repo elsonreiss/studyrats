@@ -19,6 +19,7 @@ export default function GroupChat({ groupId }) {
   const [messages, setMessages] = useState(null)
   const [text, setText] = useState('')
   const [sending, setSending] = useState(false)
+  const [error, setError] = useState(null)
   const [people, setPeople] = useState({})
   const bottomRef = useRef(null)
   const boxRef = useRef(null)
@@ -93,19 +94,35 @@ export default function GroupChat({ groupId }) {
     const body = text.trim()
     if (!body || sending) return
     setSending(true)
+    setError(null)
     setText('')
-    const { error } = await supabase.from('group_messages').insert({
-      group_id: groupId,
-      user_id: user.id,
-      body,
-    })
-    if (error) setText(body)
+
+    // devolve a linha criada: assim a mensagem aparece na hora,
+    // mesmo que o tempo real demore ou falhe
+    const { data, error: err } = await supabase
+      .from('group_messages')
+      .insert({ group_id: groupId, user_id: user.id, body })
+      .select()
+      .single()
+
+    if (err) {
+      setText(body)
+      setError(err.message.includes('Muitas mensagens')
+        ? 'Devagar — muitas mensagens seguidas. Espere alguns segundos.'
+        : 'Não foi possível enviar. Tente de novo.')
+      setTimeout(() => setError(null), 4000)
+    } else if (data) {
+      setMessages((prev) => (prev?.some((m) => m.id === data.id) ? prev : [...(prev || []), data]))
+    }
+
     setSending(false)
   }
 
   async function remove(id) {
-    await supabase.from('group_messages').delete().eq('id', id)
+    const before = messages
     setMessages((prev) => prev?.filter((m) => m.id !== id) || [])
+    const { error: err } = await supabase.from('group_messages').delete().eq('id', id)
+    if (err) setMessages(before)
   }
 
   function onKey(e) {
@@ -189,6 +206,10 @@ export default function GroupChat({ groupId }) {
 
         <div ref={bottomRef} />
       </div>
+
+      {error && (
+        <p className="text-red-500 text-sm px-5 pb-2 text-center rise">{error}</p>
+      )}
 
       <form onSubmit={send} className="border-t border-edge p-4 flex items-end gap-3">
         <textarea

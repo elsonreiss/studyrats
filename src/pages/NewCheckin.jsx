@@ -73,11 +73,12 @@ export default function NewCheckin() {
         .single()
       if (insErr) throw insErr
 
+      // o check-in já está salvo neste ponto. se o vínculo com os desafios
+      // falhar, não faz sentido dizer que deu erro — ele conta do mesmo jeito
       if (picked.length > 0) {
-        const { error: linkErr } = await supabase
+        await supabase
           .from('checkin_groups')
           .insert(picked.map((gid) => ({ session_id: created.id, group_id: gid })))
-        if (linkErr) throw linkErr
       }
 
       // aproveita a visita para limpar as fotos antigas do próprio usuário

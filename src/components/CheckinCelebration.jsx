@@ -14,13 +14,22 @@ export default function CheckinCelebration({ open, streak = 0, onDone, duration 
     if (!open) return
     setShow(true)
     document.body.style.overflow = 'hidden'
-    const t = setTimeout(() => {
+
+    // guard: sem ele, tocar na tela e o tempo acabar disparavam onDone
+    // duas vezes, empilhando duas navegações
+    let done = false
+    const finish = () => {
+      if (done) return
+      done = true
       setShow(false)
       document.body.style.overflow = ''
       onDone?.()
-    }, duration)
+    }
+
+    const t = setTimeout(finish, duration)
     return () => {
       clearTimeout(t)
+      done = true
       document.body.style.overflow = ''
     }
   }, [open, duration, onDone])

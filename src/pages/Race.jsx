@@ -17,16 +17,24 @@ export default function Race() {
   const [summary, setSummary] = useState(null)
   const [ready, setReady] = useState(false)
 
+  const [error, setError] = useState(false)
+
   useEffect(() => {
+    let alive = true
     Promise.all([
       supabase.rpc('get_race', { p_goal: GOAL }),
       supabase.rpc('get_race_summary', { p_goal: GOAL }),
-    ]).then(([r, s]) => {
-      setRows(r.data || [])
-      setSummary(s.data?.[0] || null)
-      // pequeno atraso para as barras animarem do zero
-      setTimeout(() => setReady(true), 80)
-    })
+    ])
+      .then(([r, s]) => {
+        if (!alive) return
+        if (r.error) { setError(true); setRows([]); return }
+        setRows(r.data || [])
+        setSummary(s.data?.[0] || null)
+        // pequeno atraso para as barras animarem do zero
+        setTimeout(() => { if (alive) setReady(true) }, 80)
+      })
+      .catch(() => { if (alive) { setError(true); setRows([]) } })
+    return () => { alive = false }
   }, [])
 
   const me = rows?.find((r) => r.user_id === user.id)
@@ -60,7 +68,14 @@ export default function Race() {
 
       {rows === null && <RatLoader size={52} />}
 
-      {rows?.length === 0 && (
+      {error && (
+        <div className="card-soft py-20 text-center">
+          <p className="h2">Não foi possível carregar a corrida.</p>
+          <p className="lead mt-2">Verifique sua conexão e tente de novo.</p>
+        </div>
+      )}
+
+      {!error && rows?.length === 0 && (
         <div className="card-soft py-24 text-center" data-reveal>
           <p className="h2">A corrida ainda não começou.</p>
           <p className="lead mt-2">Faça o primeiro check-in e largue na frente.</p>
@@ -68,7 +83,7 @@ export default function Race() {
         </div>
       )}
 
-      {rows?.length > 0 && (
+      {!error && rows?.length > 0 && (
         <>
           {/* Seu progresso */}
           {me && (

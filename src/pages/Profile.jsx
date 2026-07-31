@@ -62,8 +62,22 @@ export default function Profile() {
 
   async function save(e) {
     e.preventDefault()
-    await supabase.from('profiles').update({ name, bio }).eq('id', user.id)
+    const clean = name.trim()
+    if (!clean) return setFeedback({ ok: false, text: 'O nome não pode ficar vazio.' })
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({ name: clean, bio: bio.trim() })
+      .eq('id', user.id)
+
+    if (error) {
+      setFeedback({ ok: false, text: 'Não foi possível salvar. Tente de novo.' })
+      return
+    }
+
     setEditing(false)
+    setFeedback({ ok: true, text: 'Perfil atualizado.' })
+    setTimeout(() => setFeedback(null), 3000)
     load()
   }
 

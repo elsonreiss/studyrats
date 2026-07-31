@@ -1,10 +1,11 @@
 import { useEffect, useState, createContext, useContext, lazy, Suspense } from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { supabase, todayISO } from './lib/supabase'
 import { useDailyReminder } from './lib/reminder'
 import Layout from './components/Layout'
 import InstallPrompt from './components/InstallPrompt'
 import RatLoader from './components/RatLoader'
+import ScrollToTop from './components/ScrollToTop'
 import Auth from './pages/Auth'
 import Feed from './pages/Feed'
 
@@ -24,18 +25,24 @@ function Fallback() {
 }
 
 function Shell() {
+  const { pathname } = useLocation()
   const [checkedToday, setCheckedToday] = useState(null)
 
+  // reconsulta a cada troca de tela: sem isso o lembrete podia avisar
+  // "você não fez check-in hoje" para quem acabou de fazer
   useEffect(() => {
+    let alive = true
     supabase.rpc('get_my_streak').then(({ data }) => {
-      setCheckedToday(data?.[0]?.checked_today ?? null)
+      if (alive) setCheckedToday(data?.[0]?.checked_today ?? null)
     })
-  }, [])
+    return () => { alive = false }
+  }, [pathname])
 
   useDailyReminder(checkedToday, todayISO())
 
   return (
     <Layout>
+      <ScrollToTop />
       <Suspense fallback={<Fallback />}>
         <Routes>
           <Route path="/" element={<Feed />} />

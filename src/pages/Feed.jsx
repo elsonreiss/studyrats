@@ -34,7 +34,12 @@ export default function Feed() {
   async function loadMore() {
     setLoadingMore(true)
     const { data } = await supabase.rpc('get_feed', { p_limit: PAGE, p_offset: items.length })
-    setItems((prev) => [...prev, ...(data || [])])
+    // se alguém publicar enquanto você navega, o offset desloca e a
+    // página seguinte repete itens — por isso a checagem por id
+    setItems((prev) => {
+      const seen = new Set(prev.map((i) => i.id))
+      return [...prev, ...(data || []).filter((i) => !seen.has(i.id))]
+    })
     setMore((data || []).length === PAGE)
     setLoadingMore(false)
   }
