@@ -119,7 +119,7 @@ export default function CheckinComments({ sessionId, onCountChange }) {
                   </button>
                 )}
               </div>
-              <p className="text-sm mt-0.5 leading-snug whitespace-pre-wrap break-words">{c.body}</p>
+              <p className="text-sm mt-0.5 leading-snug whitespace-pre-wrap wrap-anywhere">{c.body}</p>
             </div>
           </div>
         ))}

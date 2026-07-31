@@ -5,7 +5,8 @@ import { useAuth } from '../App'
 import Avatar from '../components/Avatar'
 import Stat from '../components/Stat'
 import Streak from '../components/Streak'
-import { SkeletonRows, SkeletonStats } from '../components/Skeleton'
+import RunningRat from '../components/RunningRat'
+import RatLoader from '../components/RatLoader'
 
 const GOAL = 100
 const MARKS = [0, 25, 50, 75, 100]
@@ -46,6 +47,10 @@ export default function Race() {
 
   const laneCount = track.length ? Math.max(...track.map((t) => t.lane)) + 1 : 1
 
+  // ritmo médio da comunidade: é onde o ratinho corre
+  const pace = summary ? Number(summary.avg_pct) : 0
+  const aheadOfPace = me ? Number(me.pct) >= pace : false
+
   return (
     <div className="space-y-16">
       <section className="text-center stagger">
@@ -53,13 +58,7 @@ export default function Race() {
         <h1 className="display mt-3" data-reveal>100 dias.</h1>
       </section>
 
-      {rows === null && (
-        <div className="space-y-12">
-          <SkeletonStats count={4} />
-          <div className="skeleton h-40 rounded-3xl" />
-          <SkeletonRows count={5} />
-        </div>
-      )}
+      {rows === null && <RatLoader size={52} />}
 
       {rows?.length === 0 && (
         <div className="card-soft py-24 text-center" data-reveal>
@@ -106,11 +105,19 @@ export default function Race() {
                   }}
                 />
               </div>
-              <p className="label mt-3">
-                {me.finished
-                  ? 'Meta concluída.'
-                  : `Faltam ${GOAL - Number(me.days)} dias para os 100.`}
-              </p>
+              <div className="flex items-center justify-between gap-4 mt-3 flex-wrap">
+                <p className="label">
+                  {me.finished
+                    ? 'Meta concluída.'
+                    : `Faltam ${GOAL - Number(me.days)} dias para os 100.`}
+                </p>
+                {!me.finished && summary && (
+                  <p className="label flex items-center gap-1.5">
+                    <RunningRat size={22} running={aheadOfPace} />
+                    {aheadOfPace ? 'acima do ritmo da comunidade' : 'abaixo do ritmo da comunidade'}
+                  </p>
+                )}
+              </div>
             </section>
           )}
 
@@ -121,20 +128,47 @@ export default function Race() {
             <div className="card-soft p-6 sm:p-10 overflow-hidden">
               <div
                 className="relative"
-                style={{ height: `${Math.max(120, laneCount * 46 + 40)}px` }}
+                style={{ height: `${Math.max(150, laneCount * 46 + 76)}px` }}
               >
+                {/* ratinho do ritmo médio */}
+                <div
+                  className="absolute z-30"
+                  style={{
+                    bottom: '1.5rem',
+                    left: ready ? `${pace}%` : '0%',
+                    transform: 'translateX(-50%)',
+                    transition: 'left 2000ms cubic-bezier(.25,.8,.3,1)',
+                    transitionDelay: '250ms',
+                  }}
+                  title={`Ritmo médio da comunidade: ${pace.toFixed(0)}%`}
+                >
+                  <div className="relative flex flex-col items-center">
+                    {/* rastro */}
+                    <span
+                      className="rat-dust absolute right-full top-1/2 -translate-y-1/2 mr-1 w-6 space-y-1 text-brand"
+                      aria-hidden="true"
+                    >
+                      <span /><span /><span />
+                    </span>
+                    <RunningRat size={46} />
+                    <span className="label num mt-0.5 whitespace-nowrap text-brand">
+                      ritmo {pace.toFixed(0)}%
+                    </span>
+                  </div>
+                </div>
+
                 {/* marcos */}
                 {MARKS.map((m) => (
                   <div
                     key={m}
-                    className="absolute top-0 bottom-6 w-px"
+                    className="absolute top-0 bottom-16 w-px"
                     style={{
                       left: `${m}%`,
                       background: m === 100 ? 'var(--s-brand)' : 'var(--s-edge)',
                     }}
                   >
                     <span
-                      className="label num absolute -bottom-6 -translate-x-1/2 whitespace-nowrap"
+                      className="label num absolute -bottom-5 -translate-x-1/2 whitespace-nowrap"
                       style={{ color: m === 100 ? 'var(--s-brand)' : undefined }}
                     >
                       {m === 100 ? 'meta' : m}
@@ -195,7 +229,7 @@ export default function Race() {
 
                 {/* linha de chegada */}
                 <div
-                  className="absolute right-0 top-0 bottom-6 w-1.5 rounded-full"
+                  className="absolute right-0 top-0 bottom-16 w-1.5 rounded-full"
                   style={{ background: 'var(--s-brand)' }}
                 />
               </div>

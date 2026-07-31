@@ -52,7 +52,7 @@ export default function CheckinModal({ item, onClose, onCountChange, onReact }) 
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
               <p className="eyebrow">{item.subject}</p>
-              <h2 className="h2 mt-1.5">{title}</h2>
+              <h2 className="h2 mt-1.5 wrap-anywhere">{title}</h2>
               {(item.group_names || []).length > 0 && (
                 <div className="flex items-center gap-2 flex-wrap mt-2.5">
                   {item.group_names.map((gname, i) => (
@@ -72,7 +72,9 @@ export default function CheckinModal({ item, onClose, onCountChange, onReact }) 
             ) : null}
           </div>
 
-          {item.notes && <p className="text-muted mt-4 leading-relaxed">{item.notes}</p>}
+          {item.notes && (
+            <p className="text-muted mt-4 leading-relaxed wrap-anywhere whitespace-pre-wrap">{item.notes}</p>
+          )}
 
           <div className="flex items-center gap-3 mt-6 pt-5 border-t border-edge">
             <Avatar url={item.avatar_url} name={item.name} size={32} />

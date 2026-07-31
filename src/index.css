@@ -55,6 +55,7 @@
 html {
   background: var(--s-surface);
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
@@ -65,7 +66,18 @@ body {
   -webkit-font-smoothing: antialiased;
   letter-spacing: -0.011em;
   min-height: 100vh;
+  overflow-x: hidden;
   transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/**
+ * Texto escrito por gente quebra em qualquer ponto quando não cabe.
+ * Sem isso, um "KKKKKK..." sem espaços estica a página inteira.
+ */
+.wrap-anywhere {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
 }
 
 ::selection {
@@ -383,6 +395,77 @@ select.field option {
   background-size: 400% 100%;
   animation: shimmer-bg 1.5s ease-in-out infinite;
   border-radius: 0.5rem;
+}
+
+/* ---------- ratinho correndo ---------- */
+.rat { color: var(--s-brand); line-height: 0; }
+.rat-ear-inner { fill: var(--s-surface); opacity: 0.45; }
+.rat-eye { fill: var(--s-surface); }
+.rat-nose { fill: var(--s-surface); opacity: 0.7; }
+
+.rat-running .rat-body { animation: rat-bob 0.34s ease-in-out infinite; transform-origin: 50% 60%; }
+.rat-running .rat-tail { animation: rat-tail 0.5s ease-in-out infinite; transform-origin: 18px 44px; }
+
+.rat-running .rat-leg { animation: rat-step 0.34s linear infinite; transform-origin: top center; }
+.rat-running .rat-leg-1 { animation-delay: 0s }
+.rat-running .rat-leg-2 { animation-delay: 0.17s }
+.rat-running .rat-leg-3 { animation-delay: 0.17s }
+.rat-running .rat-leg-4 { animation-delay: 0s }
+
+@keyframes rat-bob {
+  0%, 100% { transform: translateY(0) rotate(0deg) }
+  50% { transform: translateY(-2.5px) rotate(-1.5deg) }
+}
+@keyframes rat-tail {
+  0%, 100% { transform: rotate(0deg) }
+  50% { transform: rotate(-16deg) }
+}
+@keyframes rat-step {
+  0%   { transform: rotate(26deg) }
+  50%  { transform: rotate(-26deg) }
+  100% { transform: rotate(26deg) }
+}
+
+/* rastro de velocidade atrás do rato */
+.rat-dust span {
+  display: block;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  opacity: 0.35;
+  animation: rat-dust 0.55s linear infinite;
+}
+.rat-dust span:nth-child(2) { animation-delay: 0.18s; opacity: 0.22 }
+.rat-dust span:nth-child(3) { animation-delay: 0.36s; opacity: 0.14 }
+
+@keyframes rat-dust {
+  0%   { transform: translateX(6px) scaleX(0.4); opacity: 0 }
+  40%  { opacity: 0.4 }
+  100% { transform: translateX(-16px) scaleX(1); opacity: 0 }
+}
+
+/* rato correndo em looping (carregamento) */
+.rat-loop { animation: rat-loop 2.2s cubic-bezier(.42,0,.58,1) infinite; }
+.rat-loop-dust { animation: rat-loop-dust 2.2s cubic-bezier(.42,0,.58,1) infinite; }
+
+@keyframes rat-loop {
+  0%   { left: 0; opacity: 0 }
+  8%   { opacity: 1 }
+  88%  { opacity: 1 }
+  100% { left: calc(100% - 44px); opacity: 0 }
+}
+@keyframes rat-loop-dust {
+  0%   { left: 0; opacity: 0 }
+  8%   { opacity: .6 }
+  88%  { opacity: .6 }
+  100% { left: calc(100% - 68px); opacity: 0 }
+}
+
+/* rato atravessando a tela (comemoração do check-in) */
+.rat-dash { animation: rat-dash 1.5s cubic-bezier(.3,0,.6,1) forwards; }
+@keyframes rat-dash {
+  0%   { transform: translateX(-30vw) }
+  100% { transform: translateX(115vw) }
 }
 
 /* chama da sequência */

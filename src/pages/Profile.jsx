@@ -14,7 +14,7 @@ import Toast from '../components/Toast'
 import Streak from '../components/Streak'
 import ReminderToggle from '../components/ReminderToggle'
 import StorageUsage from '../components/StorageUsage'
-import { SkeletonCards, SkeletonStats } from '../components/Skeleton'
+import RatLoader from '../components/RatLoader'
 
 export default function Profile() {
   const { id } = useParams()
@@ -126,18 +126,7 @@ export default function Profile() {
     }
   }
 
-  if (!profile) {
-    return (
-      <div className="space-y-14 max-w-3xl mx-auto">
-        <div className="flex flex-col items-center gap-4">
-          <div className="skeleton w-[120px] h-[120px] rounded-full" />
-          <div className="skeleton h-9 w-52 rounded-lg" />
-        </div>
-        <SkeletonStats count={3} />
-        <SkeletonCards count={4} className="grid sm:grid-cols-2 gap-6" />
-      </div>
-    )
-  }
+  if (!profile) return <RatLoader size={52} />
 
   const activeDays = new Set(list.map((s) => s.studied_at)).size
   const totalMin = list.reduce((a, s) => a + (s.minutes || 0), 0)
@@ -173,7 +162,7 @@ export default function Profile() {
 
         {!editing ? (
           <>
-            <h1 className="display mt-6" data-reveal>{profile.name}</h1>
+            <h1 className="display mt-6 wrap-anywhere" data-reveal>{profile.name}</h1>
 
             {streak && Number(streak.current_streak) > 0 && (
               <div className="flex justify-center mt-4" data-reveal>
@@ -181,7 +170,11 @@ export default function Profile() {
               </div>
             )}
 
-            {profile.bio && <p className="lead mt-4 max-w-lg mx-auto" data-reveal>{profile.bio}</p>}
+            {profile.bio && (
+              <p className="lead mt-4 max-w-lg mx-auto wrap-anywhere whitespace-pre-wrap" data-reveal>
+                {profile.bio}
+              </p>
+            )}
             {isMe && (
               <div data-reveal>
                 <button onClick={() => setEditing(true)} className="link text-sm mt-5">
@@ -192,14 +185,25 @@ export default function Profile() {
           </>
         ) : (
           <form onSubmit={save} className="max-w-sm mx-auto mt-8 space-y-3.5 text-left">
-            <input className="field" value={name} onChange={(e) => setName(e.target.value)} placeholder="Nome" required />
-            <textarea
-              className="field resize-none"
-              rows="3"
-              placeholder="Em que você está focado agora"
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
+            <input
+              className="field"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Nome"
+              maxLength={40}
+              required
             />
+            <div>
+              <textarea
+                className="field resize-none"
+                rows="3"
+                placeholder="Em que você está focado agora"
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                maxLength={200}
+              />
+              <p className="label num text-right mt-1 px-1">{bio.length}/200</p>
+            </div>
             <div className="flex gap-3">
               <button className="btn btn-primary flex-1">Salvar</button>
               <button type="button" onClick={() => setEditing(false)} className="btn btn-ghost flex-1">
@@ -252,7 +256,7 @@ export default function Profile() {
           </div>
 
           {sessions === null ? (
-            <SkeletonCards count={4} className="grid sm:grid-cols-2 gap-6" />
+            <RatLoader />
           ) : list.length === 0 ? (
             <div className="card-soft py-20 text-center">
               <p className="h2">Nenhum check-in ainda.</p>

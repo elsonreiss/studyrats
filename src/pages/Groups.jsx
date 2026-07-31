@@ -22,7 +22,6 @@ export default function Groups() {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [cover, setCover] = useState(null)
-  const [startsOn, setStartsOn] = useState(todayISO())
   const [endsOn, setEndsOn] = useState('')
   const [code, setCode] = useState('')
   const [msg, setMsg] = useState(null)
@@ -45,7 +44,8 @@ export default function Groups() {
     try {
       const { data, error } = await supabase
         .from('groups')
-        .insert({ name, description, owner_id: user.id, starts_on: startsOn, ends_on: endsOn || null })
+        // a data de início é sempre o dia da criação
+        .insert({ name, description, owner_id: user.id, starts_on: todayISO(), ends_on: endsOn || null })
         .select()
         .single()
       if (error) throw error
@@ -107,17 +107,13 @@ export default function Groups() {
             onChange={(e) => setName(e.target.value)} required />
           <input className="field" placeholder="Descrição (opcional)" value={description}
             onChange={(e) => setDescription(e.target.value)} />
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="label block mb-1.5 px-1">Início</label>
-              <input type="date" className="field num" value={startsOn}
-                onChange={(e) => setStartsOn(e.target.value)} required />
-            </div>
-            <div>
-              <label className="label block mb-1.5 px-1">Fim (opcional)</label>
-              <input type="date" className="field num" min={startsOn} value={endsOn}
-                onChange={(e) => setEndsOn(e.target.value)} />
-            </div>
+          <div>
+            <label className="label block mb-1.5 px-1">Termina em (opcional)</label>
+            <input type="date" className="field num" min={todayISO()} value={endsOn}
+              onChange={(e) => setEndsOn(e.target.value)} />
+            <p className="text-sm text-faint mt-2 px-1">
+              O desafio começa hoje, <span className="num">{fmtDate(todayISO())}</span>.
+            </p>
           </div>
           <button disabled={saving} className="btn btn-primary w-full">
             {saving ? 'Criando' : 'Criar desafio'}
@@ -138,7 +134,7 @@ export default function Groups() {
             required
           />
           <p className="text-muted text-sm">
-            Peça o código ou o link para quem já participa. Também dá para entrar abrindo o link direto.
+            Peça o código para quem já participa.
           </p>
           <button className="btn btn-ghost w-full">Entrar</button>
         </form>
@@ -184,10 +180,10 @@ export default function Groups() {
 
                   <div className="p-8">
                     <div className="flex items-start justify-between gap-3">
-                      <h3 className="h2 group-hover:text-brand transition-colors duration-300">{g.name}</h3>
+                      <h3 className="h2 group-hover:text-brand transition-colors duration-300 wrap-anywhere">{g.name}</h3>
                       {!g.photo_url && g.owner_id === user.id && <span className="chip shrink-0">dono</span>}
                     </div>
-                    {g.description && <p className="text-muted mt-2">{g.description}</p>}
+                    {g.description && <p className="text-muted mt-2 wrap-anywhere">{g.description}</p>}
 
                     {g.ends_on && (
                       <>

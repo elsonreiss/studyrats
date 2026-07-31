@@ -4,7 +4,7 @@ import { supabase, fmtDate } from '../lib/supabase'
 import { useAuth } from '../App'
 import Avatar from './Avatar'
 import Streak from './Streak'
-import { SkeletonRows } from './Skeleton'
+import RatLoader from './RatLoader'
 
 export default function GroupMembers({ groupId }) {
   const { user } = useAuth()
@@ -16,7 +16,7 @@ export default function GroupMembers({ groupId }) {
       .then(({ data }) => setRows(data || []))
   }, [groupId])
 
-  if (rows === null) return <SkeletonRows count={4} />
+  if (rows === null) return <RatLoader />
 
   return (
     <div className="card divide-y divide-edge overflow-hidden stagger">

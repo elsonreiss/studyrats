@@ -11,7 +11,7 @@ import GroupChat from '../components/GroupChat'
 import GroupMembers from '../components/GroupMembers'
 import Avatar from '../components/Avatar'
 import { useSignedPhotos, photoOf } from '../lib/photos'
-import { SkeletonRows } from '../components/Skeleton'
+import RatLoader from '../components/RatLoader'
 
 function progress(startsOn, endsOn) {
   if (!endsOn) return null
@@ -130,16 +130,7 @@ export default function GroupDetail() {
     setTimeout(() => setCopied(null), 1800)
   }
 
-  if (state === 'loading') {
-    return (
-      <div className="max-w-2xl mx-auto space-y-8">
-        <div className="skeleton h-10 w-64 rounded-xl" />
-        <div className="skeleton w-full aspect-[16/9] rounded-2xl" />
-        <div className="skeleton h-12 w-full rounded-full" />
-        <SkeletonRows count={4} />
-      </div>
-    )
-  }
+  if (state === 'loading') return <RatLoader size={52} />
 
   if (state === 'notfound') {
     return (
@@ -166,8 +157,8 @@ export default function GroupDetail() {
           />
         )}
         <p className="eyebrow">Convite para desafio privado</p>
-        <h1 className="display mt-4">{preview.name}</h1>
-        {preview.description && <p className="lead mt-5">{preview.description}</p>}
+        <h1 className="display mt-4 wrap-anywhere">{preview.name}</h1>
+        {preview.description && <p className="lead mt-5 wrap-anywhere">{preview.description}</p>}
         <p className="label mt-6 num">
           {preview.member_count} {Number(preview.member_count) === 1 ? 'membro' : 'membros'}
           {pg && ` · ${pg.left} dias restantes`}
@@ -188,8 +179,8 @@ export default function GroupDetail() {
     <div className="max-w-2xl mx-auto">
       <Link to="/grupos" className="label hover:text-ink transition">← Desafios</Link>
 
-      <h1 className="h1 mt-4">{group.name}</h1>
-      {group.description && <p className="text-muted mt-2">{group.description}</p>}
+      <h1 className="h1 mt-4 wrap-anywhere">{group.name}</h1>
+      {group.description && <p className="text-muted mt-2 wrap-anywhere">{group.description}</p>}
 
       {/* Cartão da capa com o resumo */}
       <div className="card-soft overflow-hidden mt-6" data-reveal="scale">

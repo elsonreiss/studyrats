@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { supabase, uploadImage } from '../lib/supabase'
+import { supabase, uploadImage, fmtDate } from '../lib/supabase'
 import { useAuth } from '../App'
 import PhotoPicker from './PhotoPicker'
 
@@ -39,10 +39,10 @@ export default function EditGroup({ group, onClose, onSaved }) {
     setSaving(true)
     setError(null)
     try {
+      // a data de início é fixa: mexer nela mudaria o ranking retroativamente
       const patch = {
         name: name.trim(),
         description: description.trim(),
-        starts_on: startsOn,
         ends_on: endsOn || null,
       }
 
@@ -101,17 +101,13 @@ export default function EditGroup({ group, onClose, onSaved }) {
           <input className="field" value={description} onChange={(e) => setDescription(e.target.value)} />
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className="label block mb-1.5 px-1">Início</label>
-            <input type="date" className="field num" value={startsOn}
-              onChange={(e) => setStartsOn(e.target.value)} required />
-          </div>
-          <div>
-            <label className="label block mb-1.5 px-1">Fim (opcional)</label>
-            <input type="date" className="field num" min={startsOn} value={endsOn || ''}
-              onChange={(e) => setEndsOn(e.target.value)} />
-          </div>
+        <div>
+          <label className="label block mb-1.5 px-1">Termina em (opcional)</label>
+          <input type="date" className="field num" min={startsOn} value={endsOn || ''}
+            onChange={(e) => setEndsOn(e.target.value)} />
+          <p className="text-sm text-faint mt-2 px-1">
+            Começou em <span className="num">{fmtDate(startsOn)}</span> e essa data não muda.
+          </p>
         </div>
 
         {error && <p className="text-red-500 text-sm">{error}</p>}

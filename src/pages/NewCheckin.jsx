@@ -5,6 +5,7 @@ import { purgeOncePerDay } from '../lib/cleanup'
 import { useAuth } from '../App'
 import PhotoPicker from '../components/PhotoPicker'
 import DurationPicker from '../components/DurationPicker'
+import CheckinCelebration from '../components/CheckinCelebration'
 
 function fmtDuration(h, m) {
   if (!h && !m) return 'Não informar'
@@ -32,6 +33,7 @@ export default function NewCheckin() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
   const [pickTime, setPickTime] = useState(false)
+  const [celebrate, setCelebrate] = useState(null)
 
   useEffect(() => {
     supabase
@@ -81,7 +83,12 @@ export default function NewCheckin() {
       // aproveita a visita para limpar as fotos antigas do próprio usuário
       purgeOncePerDay(user.id)
 
-      navigate(picked.length === 1 ? `/grupos/${picked[0]}` : '/')
+      // busca a sequência já atualizada para mostrar na comemoração
+      const { data: st } = await supabase.rpc('get_my_streak')
+      setCelebrate({
+        streak: Number(st?.[0]?.current_streak || 0),
+        to: picked.length === 1 ? `/grupos/${picked[0]}` : '/',
+      })
     } catch (err) {
       setError(err.message)
     } finally {
@@ -219,6 +226,12 @@ export default function NewCheckin() {
         minutes={mins}
         onConfirm={(h, m) => { setHours(h); setMins(m) }}
         onClose={() => setPickTime(false)}
+      />
+
+      <CheckinCelebration
+        open={!!celebrate}
+        streak={celebrate?.streak}
+        onDone={() => navigate(celebrate?.to || '/')}
       />
 
       {error && <p className="text-red-500 text-center rise">{error}</p>}

@@ -1,12 +1,11 @@
 import { useEffect, useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { supabase, fmtHours } from '../lib/supabase'
+import { supabase } from '../lib/supabase'
 import { useSignedPhotos, photoOf } from '../lib/photos'
-import Stat from '../components/Stat'
 import CheckinCard from '../components/CheckinCard'
 import CheckinModal from '../components/CheckinModal'
 import Streak, { FlameIcon } from '../components/Streak'
-import { SkeletonCards, SkeletonStats } from '../components/Skeleton'
+import RatLoader from '../components/RatLoader'
 
 // páginas menores: menos imagens baixadas por visita
 const PAGE = 12
@@ -16,21 +15,18 @@ export default function Feed() {
   const [more, setMore] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
   const [streak, setStreak] = useState(null)
-  const [mine, setMine] = useState([])
   const [open, setOpen] = useState(null)
 
   const urls = useSignedPhotos(items || [])
 
   const load = useCallback(async () => {
-    const [{ data: feed }, { data: st }, { data: my }] = await Promise.all([
+    const [{ data: feed }, { data: st }] = await Promise.all([
       supabase.rpc('get_feed', { p_limit: PAGE, p_offset: 0 }),
       supabase.rpc('get_my_streak'),
-      supabase.from('study_sessions').select('minutes, studied_at'),
     ])
     setItems(feed || [])
     setMore((feed || []).length === PAGE)
     setStreak(st?.[0] || null)
-    setMine(my || [])
   }, [])
 
   useEffect(() => { load() }, [load])
@@ -47,9 +43,6 @@ export default function Feed() {
     setItems((prev) => prev?.map((it) => (it.id === id ? { ...it, ...fields } : it)) || prev)
     setOpen((o) => (o && o.id === id ? { ...o, ...fields } : o))
   }
-
-  const activeDays = new Set(mine.map((s) => s.studied_at)).size
-  const totalMin = mine.reduce((a, s) => a + (s.minutes || 0), 0)
 
   return (
     <div className="space-y-20">
@@ -103,21 +96,10 @@ export default function Feed() {
         </section>
       )}
 
-      {/* Métricas */}
-      {items === null ? (
-        <SkeletonStats count={3} />
-      ) : (
-        <section className="grid grid-cols-3 gap-4 stagger">
-          <div data-reveal="scale"><Stat label="Meus check-ins" value={mine.length} /></div>
-          <div data-reveal="scale"><Stat label="Dias ativos" value={activeDays} /></div>
-          <div data-reveal="scale"><Stat label="Duração total" value={totalMin} format={fmtHours} /></div>
-        </section>
-      )}
-
       <section>
         <h2 className="h1 text-center mb-14" data-reveal>Últimos check-ins.</h2>
 
-        {items === null && <SkeletonCards count={6} />}
+        {items === null && <RatLoader />}
 
         {items?.length === 0 && (
           <div className="card-soft py-20 text-center" data-reveal>

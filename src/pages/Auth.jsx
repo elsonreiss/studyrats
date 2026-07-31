@@ -61,16 +61,15 @@ export default function Auth() {
         className="sticky top-0 z-30 border-b border-edge backdrop-blur-xl"
         style={{ background: 'var(--s-nav)' }}
       >
-        <div className="max-w-[1000px] mx-auto px-6 h-14 flex items-center justify-between">
-          <Logo className="h-9 w-auto" />
-          <span className="label hidden sm:inline">comunidade Acelera Dev</span>
+        <div className="max-w-[1000px] mx-auto px-6 h-14 flex items-center">
+          <Logo wordmark className="h-9 w-auto" textClass="text-[17px]" />
         </div>
       </header>
 
       {/* Hero */}
       <section className="px-6 pt-20 pb-20 text-center stagger">
         <div data-reveal="scale">
-          <Logo className="h-28 sm:h-36 w-auto mx-auto float" />
+          <Logo className="h-32 sm:h-44 w-auto mx-auto float" />
         </div>
         <h1 className="display mt-8" data-reveal>
           Estudo sem prova

@@ -4,7 +4,7 @@ import { supabase, fmtHours, daysAgoISO } from '../lib/supabase'
 import { useAuth } from '../App'
 import Avatar from './Avatar'
 import Segmented from './Segmented'
-import { SkeletonRows } from './Skeleton'
+import RatLoader from './RatLoader'
 
 const periods = [
   { key: 'week', label: '7 dias' },
@@ -45,7 +45,7 @@ export default function Leaderboard({ groupId = null, limit = null, showPeriods 
         </div>
       )}
 
-      {rows === null && <SkeletonRows count={5} />}
+      {rows === null && <RatLoader />}
 
       {rows?.length === 0 && (
         <div className="card-soft py-20 text-center" data-reveal>

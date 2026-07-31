@@ -28,7 +28,11 @@ export default function Layout({ children }) {
       >
         <div className="max-w-[1000px] mx-auto px-6 h-14 flex items-center justify-between gap-6">
           <Link to="/" className="shrink-0 group">
-            <Logo className="h-9 w-auto transition-transform duration-500 group-hover:scale-110" />
+            <Logo
+              wordmark
+              className="h-9 w-auto transition-transform duration-500 group-hover:scale-110"
+              textClass="text-[17px]"
+            />
           </Link>
 
           <nav className="hidden sm:flex items-center gap-6">

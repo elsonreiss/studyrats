@@ -47,10 +47,10 @@ export default function CheckinCard({ item, photoUrl, onDelete, onEdit, onOpen, 
           ))}
         </div>
 
-        <h3 className="h2 mt-1.5 leading-tight">{title}</h3>
+        <h3 className="h2 mt-1.5 leading-tight wrap-anywhere">{title}</h3>
 
         {item.notes && (
-          <p className="text-muted mt-3 leading-relaxed line-clamp-3">{item.notes}</p>
+          <p className="text-muted mt-3 leading-relaxed line-clamp-3 wrap-anywhere">{item.notes}</p>
         )}
 
         <div className="flex items-center gap-2.5 mt-6 pt-5 border-t border-edge">

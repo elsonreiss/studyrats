@@ -161,7 +161,7 @@ export default function GroupChat({ groupId }) {
                     </span>
                   )}
                   <div
-                    className="px-4 py-2.5 rounded-2xl text-[15px] leading-snug whitespace-pre-wrap break-words rise"
+                    className="px-4 py-2.5 rounded-2xl text-[15px] leading-snug whitespace-pre-wrap wrap-anywhere rise"
                     style={
                       mine
                         ? { background: 'var(--s-brand)', color: 'var(--s-on-brand)', borderBottomRightRadius: 6 }

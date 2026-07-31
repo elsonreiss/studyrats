@@ -4,6 +4,7 @@ import { supabase, todayISO } from './lib/supabase'
 import { useDailyReminder } from './lib/reminder'
 import Layout from './components/Layout'
 import InstallPrompt from './components/InstallPrompt'
+import RatLoader from './components/RatLoader'
 import Auth from './pages/Auth'
 import Feed from './pages/Feed'
 
@@ -19,15 +20,7 @@ const AuthContext = createContext(null)
 export const useAuth = () => useContext(AuthContext)
 
 function Fallback() {
-  return (
-    <div className="space-y-8 py-10">
-      <div className="skeleton h-12 w-64 mx-auto rounded-xl" />
-      <div className="skeleton h-4 w-96 max-w-full mx-auto rounded-full" />
-      <div className="grid sm:grid-cols-3 gap-6 pt-6">
-        {[0, 1, 2].map((i) => <div key={i} className="skeleton h-40 rounded-2xl" />)}
-      </div>
-    </div>
-  )
+  return <RatLoader size={52} />
 }
 
 function Shell() {
@@ -71,7 +64,11 @@ export default function App() {
   }, [])
 
   if (session === undefined) {
-    return <div className="min-h-screen grid place-items-center text-muted text-sm">Carregando</div>
+    return (
+      <div className="min-h-screen grid place-items-center">
+        <RatLoader size={56} label="" />
+      </div>
+    )
   }
 
   if (!session) return <Auth />
