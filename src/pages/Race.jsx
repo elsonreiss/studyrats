@@ -7,6 +7,7 @@ import Stat from '../components/Stat'
 import Streak from '../components/Streak'
 import RunningRat from '../components/RunningRat'
 import RatLoader from '../components/RatLoader'
+import AceleraDevBanner from '../components/AceleraDevBanner'
 
 const GOAL = 100
 const MARKS = [0, 25, 50, 75, 100]
@@ -261,6 +262,8 @@ export default function Race() {
               <div data-reveal="scale"><Stat label="Concluíram" value={Number(summary.finished)} /></div>
             </section>
           )}
+
+          <AceleraDevBanner />
 
           {/* Raias individuais */}
           <section>
