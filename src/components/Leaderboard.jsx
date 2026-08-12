@@ -7,22 +7,35 @@ import Segmented from './Segmented'
 import RatLoader from './RatLoader'
 
 const periods = [
-  { key: 'week', label: '7 dias' },
-  { key: 'month', label: '30 dias' },
   { key: 'all', label: 'Geral' },
+  { key: 'month', label: '30 dias' },
+  { key: 'week', label: '7 dias' },
 ]
 
+/**
+ * A janela inclui hoje. Antes eu usava daysAgoISO(7), que somava
+ * hoje + 7 dias anteriores = 8 dias — por isso o contador parecia
+ * travar em 8 e nunca passar disso.
+ */
 function sinceFor(period) {
-  if (period === 'week') return daysAgoISO(7)
-  if (period === 'month') return daysAgoISO(30)
+  if (period === 'week') return daysAgoISO(6)
+  if (period === 'month') return daysAgoISO(29)
   return null
+}
+
+const HINTS = {
+  week: 'Contando os últimos 7 dias — o máximo possível aqui é 7.',
+  month: 'Contando os últimos 30 dias — o máximo possível aqui é 30.',
+  all: null,
 }
 
 const MEDAL = ['#c8a021', '#8e8e93', '#a86b3c']
 
 export default function Leaderboard({ groupId = null, limit = null, showPeriods = true }) {
   const { user } = useAuth()
-  const [period, setPeriod] = useState(groupId ? 'all' : 'week')
+  // "Geral" como padrão: é o único que cresce para sempre.
+  // Antes abria em "7 dias" e o número parecia empacado no teto da janela.
+  const [period, setPeriod] = useState('all')
   const [rows, setRows] = useState(null)
 
   const [error, setError] = useState(false)
@@ -50,8 +63,9 @@ export default function Leaderboard({ groupId = null, limit = null, showPeriods 
   return (
     <div className="space-y-10">
       {showPeriods && (
-        <div className="flex justify-center" data-reveal>
+        <div className="flex flex-col items-center gap-3" data-reveal>
           <Segmented options={periods} value={period} onChange={setPeriod} />
+          {HINTS[period] && <p className="label">{HINTS[period]}</p>}
         </div>
       )}
 

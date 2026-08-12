@@ -377,7 +377,11 @@ export default function GroupDetail() {
       )}
 
       {tab === 'ranking' && (
-        <div className="mt-8">
+        <div className="mt-8 space-y-5">
+          <p className="label text-center">
+            Contando os check-ins desde {fmtDate(group.starts_on)}
+            {group.ends_on ? `, até ${fmtDate(group.ends_on)}` : ''}.
+          </p>
           <Leaderboard groupId={id} showPeriods={false} />
         </div>
       )}
